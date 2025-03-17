@@ -6,18 +6,20 @@ A command-line task management application written in Go.
 
 ```
 .
+├── go.mod
+├── Makefile
 ├── cmd/
 │   └── cli/            # Main application entry point
 ├── pkg/
 │   ├── models/         # Data models
-│   │   └── tests/      # Model-specific tests
+│   │   └── tests/      # Unit test
 │   ├── database/       # Database operations
-│   │   └── tests/      # Database-specific tests
+│   │   └── tests/      # Unit test
 │   └── utils/          # Utility functions
-│       └── tests/      # Utility-specific tests
+│       └── tests/      # Unit test
 ├── internal/
 │   └── handlers/       # Command handlers
-│       └── tests/      # Handler-specific tests
+│       └── tests/      # Unit test
 └── tests/              # Top-level test directory
     ├── integration/    # Integration tests
     └── e2e/           # End-to-end tests
@@ -26,6 +28,7 @@ A command-line task management application written in Go.
 ## Requirements
 
 - Go 1.21 or higher
+- Make (for using Makefile commands)
 
 ## Setup
 
@@ -40,23 +43,44 @@ cd cli_task_manager_go
 go mod tidy
 ```
 
-3. Build the application
+## Available Make Commands
+
+You can use the following make commands for development:
+
 ```bash
-go build -o task ./cmd/cli
+make help           # Show all available commands
+make build         # Build the application
+make test          # Run all tests
+make clean         # Clean build files
+make run           # Run the application
+make fmt           # Format all Go files
+make vet           # Run Go vet
+make lint          # Run linter
+make test-coverage # Run tests with coverage report
 ```
 
-## Testing
+## Development Workflow
 
-Run all tests:
+1. Format your code:
 ```bash
-go test ./...
+make fmt
 ```
 
-Run specific test suite:
+2. Run tests:
 ```bash
-go test ./pkg/models/...  # Run model tests
-go test ./tests/integration/...  # Run integration tests
-go test ./tests/e2e/...  # Run end-to-end tests
+make test
+```
+
+3. Check code quality:
+```bash
+make vet
+make lint
+```
+
+4. Build and run:
+```bash
+make build
+make run
 ```
 
 ## Usage
