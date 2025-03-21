@@ -1,34 +1,28 @@
-# CLI Task Manager
+# Simple CLI Task Manager
 
-A command-line task management application written in Go.
+A minimal command-line task management application written in Go.
+
+## Features
+
+- Add new tasks
+- List all tasks
+- Mark tasks as complete
+- Delete tasks
+- Store tasks in a simple JSON file
 
 ## Project Structure
 
 ```
 .
-├── go.mod
-├── Makefile
 ├── cmd/
-│   └── cli/            # Main application entry point
-├── pkg/
-│   ├── models/         # Data models
-│   │   └── tests/      # Unit test
-│   ├── database/       # Database operations
-│   │   └── tests/      # Unit test
-│   └── utils/          # Utility functions
-│       └── tests/      # Unit test
-├── internal/
-│   └── handlers/       # Command handlers
-│       └── tests/      # Unit test
-└── tests/              # Top-level test directory
-    ├── integration/    # Integration tests
-    └── e2e/           # End-to-end tests
+│   └── cli/         # Main application code
+└── pkg/
+    └── models/      # Task data model
 ```
 
 ## Requirements
 
 - Go 1.21 or higher
-- Make (for using Makefile commands)
 
 ## Setup
 
@@ -38,54 +32,17 @@ git clone https://github.com/soohyeuk/cli_task_manager_go.git
 cd cli_task_manager_go
 ```
 
-2. Install dependencies
+2. Build and run
 ```bash
-go mod tidy
-```
-
-## Available Make Commands
-
-You can use the following make commands for development:
-
-```bash
-make help           # Show all available commands
-make build         # Build the application
-make test          # Run all tests
-make clean         # Clean build files
-make run           # Run the application
-make fmt           # Format all Go files
-make vet           # Run Go vet
-make lint          # Run linter
-make test-coverage # Run tests with coverage report
-```
-
-## Development Workflow
-
-1. Format your code:
-```bash
-make fmt
-```
-
-2. Run tests:
-```bash
-make test
-```
-
-3. Check code quality:
-```bash
-make vet
-make lint
-```
-
-4. Build and run:
-```bash
-make build
-make run
+go build -o task ./cmd/cli
+./task
 ```
 
 ## Usage
 
-Documentation for usage will be added as the project develops.
+```bash
+./task add "Buy groceries"     # Add a new task
+```
 
 ## License
 
