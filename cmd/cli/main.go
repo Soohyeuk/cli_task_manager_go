@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/soohyeuk/cli_task_manager_go/pkg/models"
@@ -31,6 +32,18 @@ func saveTasks(tasks []models.Task) error {
 		return err
 	}
 	return os.WriteFile(taskFile, data, 0644)
+}
+
+func findTaskByID(tasks []models.Task, id int) (int, *models.Task) {
+	taskMap := make(map[int]int) // map[taskID]sliceIndex
+	for i, task := range tasks {
+		taskMap[task.ID] = i
+	}
+
+	if idx, exists := taskMap[id]; exists {
+		return idx, &tasks[idx]
+	}
+	return -1, nil
 }
 
 func main() {
@@ -101,5 +114,73 @@ func main() {
 			}
 			fmt.Printf("%s %d. %s (%s)\n", status, task.ID, task.Title, task.CreatedAt.Format("2006-01-02 15:04:05"))
 		}
+	} else if command == "done" {
+		if len(os.Args) < 3 {
+			fmt.Println("Usage: task done <id>")
+			os.Exit(1)
+		}
+
+		id := os.Args[2]
+		idInt, err := strconv.Atoi(id)
+		if err != nil {
+			fmt.Println("Invalid task ID")
+			os.Exit(1)
+		}
+
+		tasks, err := loadTasks()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error loading tasks: %v\n", err)
+			os.Exit(1)
+		}
+
+		idx, task := findTaskByID(tasks, idInt)
+		if task == nil {
+			fmt.Printf("Task with ID %d not found\n", idInt)
+			os.Exit(1)
+		}
+
+		tasks[idx].Completed = true
+		fmt.Printf("Marked task %d as complete\n", idInt)
+
+		if err := saveTasks(tasks); err != nil {
+			fmt.Fprintf(os.Stderr, "Error saving tasks: %v\n", err)
+			os.Exit(1)
+		}
+	} else if command == "delete" {
+		if len(os.Args) < 3 {
+			fmt.Println("Usage: task delete <id>")
+			os.Exit(1)
+		}
+
+		id := os.Args[2]
+		idInt, err := strconv.Atoi(id)
+		if err != nil {
+			fmt.Println("Invalid task ID")
+			os.Exit(1)
+		}
+
+		tasks, err := loadTasks()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error loading tasks: %v\n", err)
+			os.Exit(1)
+		}
+
+		idx, task := findTaskByID(tasks, idInt)
+		if task == nil {
+			fmt.Printf("Task with ID %d not found\n", idInt)
+			os.Exit(1)
+		}
+
+		tasks = append(tasks[:idx], tasks[idx+1:]...)
+		fmt.Printf("Deleted task %d\n", idInt)
+
+		if err := saveTasks(tasks); err != nil {
+			fmt.Fprintf(os.Stderr, "Error saving tasks: %v\n", err)
+			os.Exit(1)
+		}
+
+	} else {
+		fmt.Println("Invalid command. Please try again.")
+		os.Exit(1)
 	}
 }
